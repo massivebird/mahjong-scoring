@@ -5,12 +5,13 @@ enum Tile {
     Man(u32),
     Pin(u32),
     Sou(u32),
+    Wind(u32),
 }
 
 impl Tile {
     const fn value(self) -> u32 {
         match self {
-            Self::Man(val) | Self::Pin(val) | Self::Sou(val) => val,
+            Self::Man(val) | Self::Pin(val) | Self::Sou(val) | Self::Wind(val) => val,
         }
     }
 
@@ -20,7 +21,7 @@ impl Tile {
 }
 
 fn main() {
-    let s = "123444m456s777s22m";
+    let s = "123m444456s777s22m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut tiles: Vec<Tile> = Vec::new();
@@ -54,6 +55,7 @@ fn to_tile(val: u32, c: char) -> Result<Tile, String> {
         (val, 's') => Ok(Tile::Sou(val)),
         (val, 'm') => Ok(Tile::Man(val)),
         (val, 'p') => Ok(Tile::Pin(val)),
+        (val, 'z') => Ok(Tile::Wind(val)),
         (val, c) => panic!("Unknown tile! v={val}, c={c}"),
     }
 }
@@ -67,17 +69,17 @@ fn is_winning(tiles: &[Tile]) -> bool {
         if sequence_at(tiles, i) {
             println!("Sequence! Starts at i={i}, tile={tile:?}");
             num_trip_seq += 1;
-            i += 2;
+            i += 3;
             continue;
         } else if triplet_at(tiles, i) {
             println!("Triplet! Starts at i={i}, tile={tile:?}");
             num_trip_seq += 1;
-            i += 2;
+            i += 3;
             continue;
         } else if pair_at(tiles, i) {
             println!("Pair! Starts at i={i}, tile={tile:?}");
             num_pairs += 1;
-            i += 1;
+            i += 2;
             continue;
         }
 
@@ -94,6 +96,14 @@ fn sequence_at(tiles: &[Tile], i: usize) -> bool {
     }
 
     let tiles = [tiles[i], tiles[i + 1], tiles[i + 2]];
+
+    // Honor/winds cannot form sequences.
+    if !tiles
+        .iter()
+        .all(|t| matches!(t, Tile::Man(_) | Tile::Sou(_) | Tile::Pin(_)))
+    {
+        return false;
+    }
 
     if tiles[0].suit() != tiles[1].suit() || tiles[1].suit() != tiles[2].suit() {
         return false;
