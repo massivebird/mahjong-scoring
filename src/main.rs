@@ -1,3 +1,5 @@
+use std::mem::{Discriminant, discriminant};
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 enum Tile {
     Man(u32),
@@ -11,10 +13,14 @@ impl Tile {
             Self::Man(val) | Self::Pin(val) | Self::Sou(val) => val,
         }
     }
+
+    const fn suit(self) -> Discriminant<Self> {
+        discriminant(&self)
+    }
 }
 
 fn main() {
-    let s = "123m45s";
+    let s = "1234m45s";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut tiles: Vec<Tile> = Vec::new();
@@ -34,7 +40,7 @@ fn main() {
 
     dbg!(&tiles);
 
-    is_winning(tiles);
+    is_winning(&tiles);
 }
 
 fn to_tile(val: u32, c: char) -> Result<Tile, String> {
@@ -48,15 +54,18 @@ fn to_tile(val: u32, c: char) -> Result<Tile, String> {
     }
 }
 
-fn is_winning(tiles: Vec<Tile>) -> u32 {
+fn is_winning(tiles: &[Tile]) -> u32 {
     let mut score = 0;
 
-    let mut iter = tiles.iter().peekable();
-
-    for (i, tile) in tiles.iter().enumerate() {
-        if sequence_at(&tiles, i) {
+    let mut i = 0;
+    while let Some(tile) = tiles.get(i) {
+        if sequence_at(tiles, i) {
             println!("Sequence! Starts at i={i}, tile={tile:?}");
+            i += 2;
+            continue;
         }
+
+        i += 1;
     }
 
     score
@@ -69,6 +78,10 @@ fn sequence_at(tiles: &[Tile], i: usize) -> bool {
     }
 
     let tiles = [tiles[i], tiles[i + 1], tiles[i + 2]];
+
+    if tiles[0].suit() != tiles[1].suit() || tiles[1].suit() != tiles[2].suit() {
+        return false;
+    }
 
     tiles[1].value() == tiles[0].value() + 1 && tiles[2].value() == tiles[1].value() + 1
 }
