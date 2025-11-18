@@ -20,7 +20,7 @@ impl Tile {
 }
 
 fn main() {
-    let s = "123444m456s";
+    let s = "123444m456s777s22m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut tiles: Vec<Tile> = Vec::new();
@@ -40,7 +40,11 @@ fn main() {
 
     dbg!(&tiles);
 
-    is_winning(&tiles);
+    if is_winning(&tiles) {
+        println!("Hand {s} is a winning hand");
+    } else {
+        println!("Hand {s} is not a winning hand");
+    }
 }
 
 fn to_tile(val: u32, c: char) -> Result<Tile, String> {
@@ -54,25 +58,33 @@ fn to_tile(val: u32, c: char) -> Result<Tile, String> {
     }
 }
 
-fn is_winning(tiles: &[Tile]) -> u32 {
-    let mut score = 0;
+fn is_winning(tiles: &[Tile]) -> bool {
+    let mut num_trip_seq = 0;
+    let mut num_pairs = 0;
 
     let mut i = 0;
     while let Some(tile) = tiles.get(i) {
         if sequence_at(tiles, i) {
             println!("Sequence! Starts at i={i}, tile={tile:?}");
+            num_trip_seq += 1;
             i += 2;
             continue;
         } else if triplet_at(tiles, i) {
             println!("Triplet! Starts at i={i}, tile={tile:?}");
+            num_trip_seq += 1;
             i += 2;
+            continue;
+        } else if pair_at(tiles, i) {
+            println!("Pair! Starts at i={i}, tile={tile:?}");
+            num_pairs += 1;
+            i += 1;
             continue;
         }
 
         i += 1;
     }
 
-    score
+    num_trip_seq == 4 && num_pairs == 1
 }
 
 fn sequence_at(tiles: &[Tile], i: usize) -> bool {
@@ -105,6 +117,13 @@ fn triplet_at(tiles: &[Tile], i: usize) -> bool {
     tiles[0] == tiles[1] && tiles[1] == tiles[2]
 }
 
-fn pair(tiles: [Tile; 2]) -> bool {
-    tiles[0] == tiles[1]
+fn pair_at(tiles: &[Tile], i: usize) -> bool {
+    // Do we have enough tiles to evaluate?
+    if tiles.iter().skip(i).take(2).count() != 2 {
+        return false;
+    }
+
+    let tiles = [tiles[i], tiles[i + 1]];
+
+    tiles[0].value() == tiles[1].value() && tiles[0].suit() == tiles[1].suit()
 }
