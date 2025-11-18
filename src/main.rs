@@ -20,7 +20,7 @@ impl Tile {
 }
 
 fn main() {
-    let s = "1234m45s";
+    let s = "123444m456s";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut tiles: Vec<Tile> = Vec::new();
@@ -63,6 +63,10 @@ fn is_winning(tiles: &[Tile]) -> u32 {
             println!("Sequence! Starts at i={i}, tile={tile:?}");
             i += 2;
             continue;
+        } else if triplet_at(tiles, i) {
+            println!("Triplet! Starts at i={i}, tile={tile:?}");
+            i += 2;
+            continue;
         }
 
         i += 1;
@@ -86,7 +90,18 @@ fn sequence_at(tiles: &[Tile], i: usize) -> bool {
     tiles[1].value() == tiles[0].value() + 1 && tiles[2].value() == tiles[1].value() + 1
 }
 
-fn triplet(tiles: [Tile; 3]) -> bool {
+fn triplet_at(tiles: &[Tile], i: usize) -> bool {
+    // Do we have enough tiles to evaluate?
+    if tiles.iter().skip(i).take(3).count() != 3 {
+        return false;
+    }
+
+    let tiles = [tiles[i], tiles[i + 1], tiles[i + 2]];
+
+    if tiles[0].suit() != tiles[1].suit() || tiles[1].suit() != tiles[2].suit() {
+        return false;
+    }
+
     tiles[0] == tiles[1] && tiles[1] == tiles[2]
 }
 
