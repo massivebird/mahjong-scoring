@@ -21,10 +21,10 @@ impl Tile {
 }
 
 fn main() {
-    let s = "123m444456s777s22m";
+    let s = "234m444456s777s22m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
-    let mut tiles: Vec<Tile> = Vec::new();
+    let mut hand: Vec<Tile> = Vec::new();
 
     for c in s.chars() {
         if c.is_ascii_digit() {
@@ -33,16 +33,19 @@ fn main() {
         }
 
         for v in &suit_vals {
-            tiles.push(to_tile(*v, c).unwrap());
+            hand.push(to_tile(*v, c).unwrap());
         }
 
         suit_vals.clear();
     }
 
-    dbg!(&tiles);
+    dbg!(&hand);
 
-    if is_winning(&tiles) {
+    if is_winning(&hand) {
         println!("Hand {s} is a winning hand");
+        if all_simples(&hand) {
+            println!("And it's all simples! (1 Han)");
+        }
     } else {
         println!("Hand {s} is not a winning hand");
     }
@@ -87,6 +90,12 @@ fn is_winning(tiles: &[Tile]) -> bool {
     }
 
     num_trip_seq == 4 && num_pairs == 1
+}
+
+fn all_simples(hand: &[Tile]) -> bool {
+    hand.iter().all(|t| {
+        matches!(t.value(), 2..=8) && matches!(t, Tile::Man(_) | Tile::Sou(_) | Tile::Pin(_))
+    })
 }
 
 fn sequence_at(tiles: &[Tile], i: usize) -> bool {
