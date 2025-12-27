@@ -46,7 +46,7 @@ enum Mentsu {
 }
 
 fn main() {
-    let s = "22234m";
+    let s = "22222m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -66,28 +66,33 @@ fn main() {
 
     dbg!(&hand_tiles);
 
-    build_mentsu(&hand_tiles, 0, &[]);
+    let ans = build_mentsu(&hand_tiles, 0, &[]);
+
+    dbg!(ans);
 }
 
-fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Mentsu> {
-    let ans: Vec<Mentsu> = vec![];
+fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
+    let mut ans: Vec<Vec<Mentsu>> = vec![];
 
     // Exhausted all tiles.
     if i >= as_tiles.len() {
-        dbg!(mentsu_rn);
-        return ans;
+        return vec![mentsu_rn.to_vec()];
     }
 
     let this = as_tiles[i];
 
     // Pair
     if i <= as_tiles.len() - 2 && this == as_tiles[i + 1] {
-        build_mentsu(as_tiles, i + 2, &with(mentsu_rn, Mentsu::Pair(this)));
+        for m in build_mentsu(as_tiles, i + 2, &with(mentsu_rn, Mentsu::Pair(this))) {
+            ans.push(m);
+        }
     }
 
     // Triplet
     if i <= as_tiles.len() - 3 && this == as_tiles[i + 1] && this == as_tiles[i + 2] {
-        build_mentsu(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this)));
+        for m in build_mentsu(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this))) {
+            ans.push(m);
+        }
     }
 
     // Sequence
@@ -95,14 +100,16 @@ fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Mentsu
         && this.can_sequence(as_tiles[i + 1])
         && this.can_sequence(as_tiles[i + 2])
     {
-        build_mentsu(
+        for m in build_mentsu(
             as_tiles,
             i + 3,
             &with(
                 mentsu_rn,
                 Mentsu::Sequence(this, as_tiles[i + 1], as_tiles[i + 2]),
             ),
-        );
+        ) {
+            ans.push(m);
+        }
     }
 
     ans
