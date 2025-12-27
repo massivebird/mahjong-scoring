@@ -1,3 +1,4 @@
+use self::tile::WinMethod;
 use self::{mentsu::Mentsu, suit::Suit, tile::Tile, yaku::regular_yaku};
 
 mod mentsu;
@@ -6,27 +7,41 @@ mod tile;
 mod yaku;
 
 fn main() {
-    let s = "123m456m789m123m99m";
+    let s = "123m456m789m123m9m9m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
 
-    for c in s.chars() {
+    hand_tiles.push(Tile::new(
+        s.chars().nth(s.len() - 2).unwrap().to_digit(10).unwrap(),
+        Suit::from(s.chars().nth(s.len() - 1).unwrap()),
+        match s.chars().nth(s.len() - 3) {
+            Some(c) if c.is_whitespace() => Some(WinMethod::Ron),
+            Some(_) => Some(WinMethod::Tsumo),
+            _ => None,
+        },
+    ));
+
+    for c in s.chars().take(s.len() - 2) {
         if c.is_ascii_digit() {
             suit_vals.push(c.to_digit(10).unwrap());
             continue;
         }
 
         for val in &suit_vals {
-            hand_tiles.push(Tile::new(*val, Suit::from(c)));
+            hand_tiles.push(Tile::new(*val, Suit::from(c), None));
         }
 
         suit_vals.clear();
     }
 
+    hand_tiles.sort();
+
     let mut i13s = build_mentsu(&hand_tiles, 0, &[]);
 
     print!("{} total interpretations, ", i13s.len());
+
+    dbg!(&i13s);
 
     i13s.retain(|v| {
         v.iter()

@@ -1,14 +1,31 @@
 use crate::suit::Suit;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
 pub struct Tile {
     pub value: u32,
     pub suit: Suit,
+    pub win_method: Option<WinMethod>,
+}
+
+impl PartialEq for Tile {
+    fn eq(&self, other: &Self) -> bool {
+        self.value == other.value && self.suit == other.suit
+    }
+}
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum WinMethod {
+    Tsumo,
+    Ron,
 }
 
 impl Tile {
-    pub const fn new(value: u32, suit: Suit) -> Self {
-        Self { value, suit }
+    pub const fn new(value: u32, suit: Suit, win_method: Option<WinMethod>) -> Self {
+        Self {
+            value,
+            suit,
+            win_method,
+        }
     }
 
     /// Returns `true` if both tiles can appear in the same sequence.
