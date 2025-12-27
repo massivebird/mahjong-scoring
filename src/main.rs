@@ -1,4 +1,4 @@
-use self::{mentsu::Mentsu, suit::Suit, tile::Tile, yaku::generate_yaku};
+use self::{mentsu::Mentsu, suit::Suit, tile::Tile, yaku::regular_yaku};
 
 mod mentsu;
 mod suit;
@@ -43,7 +43,7 @@ fn main() {
 
     println!("{} winning.", i13s.len());
 
-    let yaku = generate_yaku();
+    let yaku = regular_yaku();
 
     println!("Matching yaku:");
     for y in yaku {
