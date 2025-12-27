@@ -35,7 +35,7 @@ pub fn generate_yaku() -> Vec<Yaku> {
             name: "Chanta".to_string(),
             han: 2,
             open_score: OpenScore::Reduced,
-            f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.contains_terminal())),
+            f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.contains_terminal() || m.honor())),
         },
         Yaku {
             name: "Pinfu (WIP)".to_string(),
