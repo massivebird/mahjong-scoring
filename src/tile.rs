@@ -1,7 +1,7 @@
 use crate::suit::Suit;
 use std::hash::Hash;
 
-#[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, Eq, Ord)]
 pub struct Tile {
     pub value: u32,
     pub suit: Suit,
@@ -11,6 +11,19 @@ pub struct Tile {
 impl PartialEq for Tile {
     fn eq(&self, other: &Self) -> bool {
         self.value == other.value && self.suit == other.suit
+    }
+}
+
+impl PartialOrd for Tile {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        match self.value.partial_cmp(&other.value) {
+            Some(core::cmp::Ordering::Equal) => (),
+            ord => return ord,
+        }
+        match self.suit.partial_cmp(&other.suit) {
+            Some(core::cmp::Ordering::Equal) => return Some(core::cmp::Ordering::Equal),
+            ord => return ord,
+        }
     }
 }
 

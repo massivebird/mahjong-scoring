@@ -56,6 +56,8 @@ pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
         counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
     }
 
+    dbg!(&counts);
+
     rec_build(&counts, 0, &[])
 }
 
@@ -64,11 +66,13 @@ fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Ve
     dbg!(mentsu_rn);
     let mut ans: Vec<Vec<Mentsu>> = vec![];
 
+    // Check if we've exhausted all tiles.
     let Some((&this, &this_count)) = counts.iter().nth(i) else {
         return vec![mentsu_rn.to_vec()];
     };
     dbg!((this, this_count));
 
+    // This tile has been exhausted. Try the next one.
     if this_count == 0 {
         return rec_build(counts, i + 1, mentsu_rn);
     }
