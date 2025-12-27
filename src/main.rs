@@ -27,7 +27,10 @@ struct Tile {
 impl Tile {
     /// Returns `true` if both tiles can appear in the same sequence.
     fn can_sequence(self, b: Self) -> bool {
-        self.suit == b.suit && self.value != b.value && self.value.abs_diff(b.value) <= 2
+        self.suit != Suit::Honor
+            && self.suit == b.suit
+            && self.value != b.value
+            && self.value.abs_diff(b.value) <= 2
     }
 }
 
