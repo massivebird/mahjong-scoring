@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::BTreeMap;
 
 use crate::tile::Tile;
 
@@ -50,7 +50,7 @@ impl Mentsu {
 }
 
 pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
-    let mut counts: HashMap<Tile, u32> = HashMap::new();
+    let mut counts: BTreeMap<Tile, u32> = BTreeMap::new();
 
     for t in as_tiles {
         counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
@@ -60,14 +60,14 @@ pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
 }
 
 /// Recursively computes possible interpretations of a hand.
-fn rec_build(counts: &HashMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
+fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
     dbg!(mentsu_rn);
     let mut ans: Vec<Vec<Mentsu>> = vec![];
 
     let Some((&this, &this_count)) = counts.iter().nth(i) else {
         return vec![mentsu_rn.to_vec()];
     };
-    dbg!(this);
+    dbg!((this, this_count));
 
     if this_count == 0 {
         return rec_build(counts, i + 1, mentsu_rn);
@@ -133,7 +133,7 @@ fn with(vec: &[Mentsu], val: Mentsu) -> Vec<Mentsu> {
     [vec, &[val]].concat()
 }
 
-fn decrement(counts: &HashMap<Tile, u32>, tiles: &[Tile]) -> HashMap<Tile, u32> {
+fn decrement(counts: &BTreeMap<Tile, u32>, tiles: &[Tile]) -> BTreeMap<Tile, u32> {
     let mut res = counts.clone();
 
     for t in tiles {

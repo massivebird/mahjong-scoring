@@ -7,7 +7,7 @@ mod tile;
 mod yaku;
 
 fn main() {
-    let s = "1233m3m";
+    let s = "12367m5m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
