@@ -49,7 +49,7 @@ enum Mentsu {
 }
 
 fn main() {
-    let s = "22234m567s";
+    let s = "123m456m777m123s99m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -67,13 +67,26 @@ fn main() {
         suit_vals.clear();
     }
 
-    dbg!(&hand_tiles);
+    let mut i13s = build_mentsu(&hand_tiles, 0, &[]);
 
-    let ans = build_mentsu(&hand_tiles, 0, &[]);
+    print!("{} total interpretations, ", i13s.len());
 
-    dbg!(&ans);
+    i13s.retain(|v| {
+        v.iter()
+            .filter(|m| {
+                matches!(
+                    m,
+                    Mentsu::Triplet(_) | Mentsu::Quad(_) | Mentsu::Sequence(_, _, _)
+                )
+            })
+            .count()
+            == 4
+            && v.iter().filter(|m| matches!(m, Mentsu::Pair(_))).count() == 1
+    });
 
-    println!("{:?} hand interpretations found.", ans.len());
+    println!("{} winning.", i13s.len());
+
+    dbg!(i13s);
 }
 
 fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
