@@ -98,6 +98,13 @@ fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Me
         for m in build_mentsu(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this))) {
             ans.push(m);
         }
+
+        // Sure let's check quads in here too
+        if i <= as_tiles.len() - 4 && this == as_tiles[i + 3] {
+            for m in build_mentsu(as_tiles, i + 4, &with(mentsu_rn, Mentsu::Quad(this))) {
+                ans.push(m);
+            }
+        }
     }
 
     // Sequence
