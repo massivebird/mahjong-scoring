@@ -49,7 +49,7 @@ enum Mentsu {
 }
 
 fn main() {
-    let s = "22222m";
+    let s = "22234m567s";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -71,7 +71,9 @@ fn main() {
 
     let ans = build_mentsu(&hand_tiles, 0, &[]);
 
-    dbg!(ans);
+    dbg!(&ans);
+
+    println!("{:?} hand interpretations found.", ans.len());
 }
 
 fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
