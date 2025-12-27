@@ -1,56 +1,8 @@
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-enum Suit {
-    Man,
-    Pin,
-    Sou,
-    Honor,
-}
+use self::{mentsu::Mentsu, suit::Suit, tile::Tile};
 
-impl From<char> for Suit {
-    fn from(value: char) -> Self {
-        match value {
-            'm' => Self::Man,
-            's' => Self::Sou,
-            'p' => Self::Pin,
-            'z' => Self::Honor,
-            _ => unreachable!(),
-        }
-    }
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq)]
-struct Tile {
-    value: u32,
-    suit: Suit,
-}
-
-impl Tile {
-    /// Returns `true` if both tiles can appear in the same sequence.
-    fn can_sequence(self, b: Self) -> bool {
-        self.suit != Suit::Honor
-            && self.suit == b.suit
-            && self.value != b.value
-            && self.value.abs_diff(b.value) <= 2
-    }
-
-    fn terminal(self) -> bool {
-        self.suit != Suit::Honor && matches!(self.value, 1 | 9)
-    }
-}
-
-impl Tile {
-    const fn new(value: u32, suit: Suit) -> Self {
-        Self { value, suit }
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-enum Mentsu {
-    Triplet(Tile),
-    Quad(Tile),
-    Sequence(Tile, Tile, Tile),
-    Pair(Tile),
-}
+mod mentsu;
+mod suit;
+mod tile;
 
 fn main() {
     let s = "123m456m777m123m99m";
