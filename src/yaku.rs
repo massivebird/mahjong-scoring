@@ -38,6 +38,12 @@ pub fn generate_yaku() -> Vec<Yaku> {
             f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.contains_terminal() || m.honor())),
         },
         Yaku {
+            name: "Junchan (incompatible w chanta)".to_string(),
+            han: 3,
+            open_score: OpenScore::Reduced,
+            f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.contains_terminal())),
+        },
+        Yaku {
             name: "Pinfu (WIP)".to_string(),
             han: 1,
             open_score: OpenScore::Illegal,
