@@ -19,6 +19,10 @@ impl Tile {
             && self.value.abs_diff(b.value) <= 2
     }
 
+    pub fn honor(self) -> bool {
+        self.suit == Suit::Honor
+    }
+
     pub fn terminal(self) -> bool {
         self.suit != Suit::Honor && matches!(self.value, 1 | 9)
     }

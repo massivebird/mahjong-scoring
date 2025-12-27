@@ -1,11 +1,13 @@
+use self::yaku::{Yaku, generate_yaku};
 use self::{mentsu::Mentsu, suit::Suit, tile::Tile};
 
 mod mentsu;
 mod suit;
 mod tile;
+mod yaku;
 
 fn main() {
-    let s = "123m456m777m123m99m";
+    let s = "123m456m789m123m99m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -42,7 +44,16 @@ fn main() {
 
     println!("{} winning.", i13s.len());
 
-    dbg!(i13s);
+    let yaku = generate_yaku();
+
+    println!("Matching yaku:");
+    for y in yaku {
+        for m in &i13s {
+            if y.valid_for(m.clone()) {
+                println!("{}", y.name());
+            }
+        }
+    }
 }
 
 fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
