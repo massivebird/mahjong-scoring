@@ -1,6 +1,5 @@
-use std::hash::Hash;
-
 use crate::suit::Suit;
+use std::hash::Hash;
 
 #[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
 pub struct Tile {
@@ -55,5 +54,19 @@ impl Tile {
 
     pub fn simple(self) -> bool {
         !self.terminal()
+    }
+
+    pub const fn add(self, rhs: u32) -> Option<Self> {
+        let value = self.value + rhs;
+
+        if value > 9 {
+            None
+        } else {
+            Some(Self {
+                value,
+                suit: self.suit,
+                win_method: None,
+            })
+        }
     }
 }

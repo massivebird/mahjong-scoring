@@ -56,52 +56,70 @@ pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
         counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
     }
 
-    rec_build(as_tiles, 0, &[])
+    rec_build(&counts, 0, &[])
 }
 
 /// Recursively computes possible interpretations of a hand.
-fn rec_build(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
+fn rec_build(counts: &HashMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
+    dbg!(mentsu_rn);
     let mut ans: Vec<Vec<Mentsu>> = vec![];
 
-    // Exhausted all tiles.
-    if i >= as_tiles.len() {
+    let Some((&this, &this_count)) = counts.iter().nth(i) else {
         return vec![mentsu_rn.to_vec()];
+    };
+    dbg!(this);
+
+    if this_count == 0 {
+        return rec_build(counts, i + 1, mentsu_rn);
     }
 
-    let this = as_tiles[i];
-
     // Pair
-    if i <= as_tiles.len() - 2 && this == as_tiles[i + 1] {
-        for m in rec_build(as_tiles, i + 2, &with(mentsu_rn, Mentsu::Pair(this))) {
+    if this_count >= 2 {
+        for m in rec_build(
+            &decrement(counts, &[this; 2]),
+            i,
+            &with(mentsu_rn, Mentsu::Pair(this)),
+        ) {
             ans.push(m);
         }
     }
 
     // Triplet
-    if i <= as_tiles.len() - 3 && this == as_tiles[i + 1] && this == as_tiles[i + 2] {
-        for m in rec_build(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this))) {
+    if this_count >= 3 {
+        for m in rec_build(
+            &decrement(counts, &[this; 3]),
+            i,
+            &with(mentsu_rn, Mentsu::Triplet(this)),
+        ) {
             ans.push(m);
         }
+    }
 
-        // Sure let's check quads in here too
-        if i <= as_tiles.len() - 4 && this == as_tiles[i + 3] {
-            for m in rec_build(as_tiles, i + 4, &with(mentsu_rn, Mentsu::Quad(this))) {
-                ans.push(m);
-            }
+    // Quad
+    if this_count >= 4 {
+        for m in rec_build(
+            &decrement(counts, &[this; 4]),
+            i,
+            &with(mentsu_rn, Mentsu::Quad(this)),
+        ) {
+            ans.push(m);
         }
     }
 
     // Sequence
-    if i <= as_tiles.len() - 3
-        && this.can_sequence(as_tiles[i + 1])
-        && this.can_sequence(as_tiles[i + 2])
+    if this
+        .add(1)
+        .is_some_and(|t| counts.get(&t).is_some_and(|v| *v >= 1))
+        && this
+            .add(2)
+            .is_some_and(|t| counts.get(&t).is_some_and(|v| *v >= 1))
     {
         for m in rec_build(
-            as_tiles,
-            i + 3,
+            &decrement(counts, &[this, this.add(1).unwrap(), this.add(2).unwrap()]),
+            i,
             &with(
                 mentsu_rn,
-                Mentsu::Sequence(this, as_tiles[i + 1], as_tiles[i + 2]),
+                Mentsu::Sequence(this, this.add(1).unwrap(), this.add(2).unwrap()),
             ),
         ) {
             ans.push(m);
@@ -113,4 +131,14 @@ fn rec_build(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Ments
 
 fn with(vec: &[Mentsu], val: Mentsu) -> Vec<Mentsu> {
     [vec, &[val]].concat()
+}
+
+fn decrement(counts: &HashMap<Tile, u32>, tiles: &[Tile]) -> HashMap<Tile, u32> {
+    let mut res = counts.clone();
+
+    for t in tiles {
+        res.entry(*t).and_modify(|v| *v -= 1);
+    }
+
+    res
 }
