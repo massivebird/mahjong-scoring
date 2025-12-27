@@ -25,6 +25,13 @@ struct Tile {
 }
 
 impl Tile {
+    /// Returns `true` if both tiles can appear in the same sequence.
+    fn can_sequence(self, b: Self) -> bool {
+        self.suit == b.suit && self.value != b.value && self.value.abs_diff(b.value) <= 2
+    }
+}
+
+impl Tile {
     const fn new(value: u32, suit: Suit) -> Self {
         Self { value, suit }
     }
@@ -35,7 +42,7 @@ enum Mentsu {
     Triplet(Tile),
     Quad(Tile),
     Sequence(Tile, Tile, Tile),
-    Pair(Tile, Tile),
+    Pair(Tile),
 }
 
 fn main() {
@@ -58,6 +65,51 @@ fn main() {
     }
 
     dbg!(&hand_tiles);
+
+    build_mentsu(&hand_tiles, 0, &[]);
+}
+
+fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Mentsu> {
+    let ans: Vec<Mentsu> = vec![];
+
+    // Exhausted all tiles.
+    if i >= as_tiles.len() {
+        dbg!(mentsu_rn);
+        return ans;
+    }
+
+    let this = as_tiles[i];
+
+    // Pair
+    if i <= as_tiles.len() - 2 && this == as_tiles[i + 1] {
+        build_mentsu(as_tiles, i + 2, &with(mentsu_rn, Mentsu::Pair(this)));
+    }
+
+    // Triplet
+    if i <= as_tiles.len() - 3 && this == as_tiles[i + 1] && this == as_tiles[i + 2] {
+        build_mentsu(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this)));
+    }
+
+    // Sequence
+    if i <= as_tiles.len() - 3
+        && this.can_sequence(as_tiles[i + 1])
+        && this.can_sequence(as_tiles[i + 2])
+    {
+        build_mentsu(
+            as_tiles,
+            i + 3,
+            &with(
+                mentsu_rn,
+                Mentsu::Sequence(this, as_tiles[i + 1], as_tiles[i + 2]),
+            ),
+        );
+    }
+
+    ans
+}
+
+fn with(vec: &[Mentsu], val: Mentsu) -> Vec<Mentsu> {
+    [vec, &[val]].concat()
 }
 
 // fn to_tile(val: u32, c: char) -> Result<Suit, String> {
