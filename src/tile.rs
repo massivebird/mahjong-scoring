@@ -1,3 +1,5 @@
+use std::hash::Hash;
+
 use crate::suit::Suit;
 
 #[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
@@ -10,6 +12,13 @@ pub struct Tile {
 impl PartialEq for Tile {
     fn eq(&self, other: &Self) -> bool {
         self.value == other.value && self.suit == other.suit
+    }
+}
+
+impl Hash for Tile {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.value.hash(state);
+        self.suit.hash(state);
     }
 }
 

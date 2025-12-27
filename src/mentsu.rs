@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use crate::tile::Tile;
 
 #[derive(Debug, Copy, Clone)]
@@ -48,6 +50,12 @@ impl Mentsu {
 }
 
 pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
+    let mut counts: HashMap<Tile, u32> = HashMap::new();
+
+    for t in as_tiles {
+        counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
+    }
+
     rec_build(as_tiles, 0, &[])
 }
 
