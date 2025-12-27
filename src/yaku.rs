@@ -62,10 +62,36 @@ pub fn regular_yaku() -> Vec<Yaku> {
 }
 
 pub fn yakuman() -> Vec<Yaku> {
-    vec![Yaku {
-        name: "Tsuuiisou".to_string(),
-        han: 99,
-        open_score: OpenScore::Full,
-        f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.honor())),
-    }]
+    vec![
+        Yaku {
+            name: "Tsuuiisou".to_string(),
+            han: 99,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.honor())),
+        },
+        Yaku {
+            name: "Chinroutou".to_string(),
+            han: 99,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.entirely_terminal())),
+        },
+    ]
+}
+
+/// These are tougher to evaluate with regular mentsu parsing.
+pub fn weird_yaku_and_yakuman() -> Vec<Yaku> {
+    vec![
+        Yaku {
+            name: "Chiitoi".to_string(),
+            han: 2,
+            open_score: OpenScore::Illegal,
+            f: Box::new(|vec_mn| vec_mn.iter().filter(|m| m.pair()).count() == 7),
+        },
+        Yaku {
+            name: "Kokushi musou".to_string(),
+            han: 99,
+            open_score: OpenScore::Illegal,
+            f: Box::new(|_| true), // Must be early-evaluated
+        },
+    ]
 }
