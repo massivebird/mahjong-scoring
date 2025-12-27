@@ -37,7 +37,7 @@ fn main() {
 
     hand_tiles.sort();
 
-    let mut i13s = build_mentsu(&hand_tiles, 0, &[]);
+    let mut i13s = mentsu::build_mentsu(&hand_tiles);
 
     print!("{} total interpretations, ", i13s.len());
 
@@ -68,59 +68,4 @@ fn main() {
             }
         }
     }
-}
-
-fn build_mentsu(as_tiles: &[Tile], i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
-    let mut ans: Vec<Vec<Mentsu>> = vec![];
-
-    // Exhausted all tiles.
-    if i >= as_tiles.len() {
-        return vec![mentsu_rn.to_vec()];
-    }
-
-    let this = as_tiles[i];
-
-    // Pair
-    if i <= as_tiles.len() - 2 && this == as_tiles[i + 1] {
-        for m in build_mentsu(as_tiles, i + 2, &with(mentsu_rn, Mentsu::Pair(this))) {
-            ans.push(m);
-        }
-    }
-
-    // Triplet
-    if i <= as_tiles.len() - 3 && this == as_tiles[i + 1] && this == as_tiles[i + 2] {
-        for m in build_mentsu(as_tiles, i + 3, &with(mentsu_rn, Mentsu::Triplet(this))) {
-            ans.push(m);
-        }
-
-        // Sure let's check quads in here too
-        if i <= as_tiles.len() - 4 && this == as_tiles[i + 3] {
-            for m in build_mentsu(as_tiles, i + 4, &with(mentsu_rn, Mentsu::Quad(this))) {
-                ans.push(m);
-            }
-        }
-    }
-
-    // Sequence
-    if i <= as_tiles.len() - 3
-        && this.can_sequence(as_tiles[i + 1])
-        && this.can_sequence(as_tiles[i + 2])
-    {
-        for m in build_mentsu(
-            as_tiles,
-            i + 3,
-            &with(
-                mentsu_rn,
-                Mentsu::Sequence(this, as_tiles[i + 1], as_tiles[i + 2]),
-            ),
-        ) {
-            ans.push(m);
-        }
-    }
-
-    ans
-}
-
-fn with(vec: &[Mentsu], val: Mentsu) -> Vec<Mentsu> {
-    [vec, &[val]].concat()
 }
