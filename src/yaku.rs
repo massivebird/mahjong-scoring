@@ -47,6 +47,12 @@ pub fn generate_yaku() -> Vec<Yaku> {
             }),
         },
         Yaku {
+            name: "Toitoi".to_string(),
+            han: 2,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| vec_mn.iter().all(|m| !m.sequence())),
+        },
+        Yaku {
             name: "Tsuuiisou".to_string(),
             han: 99,
             open_score: OpenScore::Full,
