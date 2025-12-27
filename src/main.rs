@@ -32,6 +32,10 @@ impl Tile {
             && self.value != b.value
             && self.value.abs_diff(b.value) <= 2
     }
+
+    fn terminal(self) -> bool {
+        self.suit != Suit::Honor && matches!(self.value, 1 | 9)
+    }
 }
 
 impl Tile {
@@ -49,7 +53,7 @@ enum Mentsu {
 }
 
 fn main() {
-    let s = "123m456m777m123s99m";
+    let s = "123m456m777m123m99m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
