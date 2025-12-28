@@ -1,7 +1,8 @@
 use self::kind::Kind;
+use crate::tile::{Suit, Tile};
 use crate::win_wait::WinWait;
-use crate::tile::{Tile, Suit};
 
+mod iter;
 pub mod kind;
 
 #[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
@@ -134,4 +135,14 @@ impl Mentsu {
             _ => false,
         }
     }
+
+    pub fn iter(&self) -> self::iter::Iter {
+        self::iter::Iter::new(self)
+    }
+}
+
+pub fn get_tiles(ms: &[Mentsu]) -> Vec<Tile> {
+    ms.iter()
+        .flat_map(|m| m.iter().collect::<Vec<Tile>>())
+        .collect()
 }
