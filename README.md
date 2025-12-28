@@ -1,4 +1,4 @@
-# massivebird's mahjong scoring utility
+# massivebird's riichi mahjong scoring utility
 
 ⚠️ NOT FINISHED ⚠️
 
