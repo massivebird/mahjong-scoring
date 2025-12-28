@@ -132,7 +132,7 @@ fn fu(hand: &[Mentsu], win_method: WinMethod) -> u32 {
             pts /= 2;
         }
 
-        if m.honor() {
+        if m.honor() || m.entirely_terminal() {
             pts *= 2;
         }
 
