@@ -1,8 +1,9 @@
-use crate::suit::Suit;
-use crate::{WinMethod, i13s};
-
 use crate::mentsu::Mentsu;
+use crate::suit::Suit;
 use crate::tile::Tile;
+use crate::{WinMethod};
+
+mod i13s;
 
 pub fn parse(s: &str) -> (Vec<Vec<Mentsu>>, Tile, WinMethod) {
     let mut suit_vals: Vec<u32> = Vec::new();
@@ -41,4 +42,3 @@ pub fn parse(s: &str) -> (Vec<Vec<Mentsu>>, Tile, WinMethod) {
 
     (i13s, win_tile, win_method)
 }
-

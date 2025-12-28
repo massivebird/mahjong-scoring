@@ -4,7 +4,6 @@ use self::{
     yaku::{REGULAR_YAKU, Yaku},
 };
 
-mod i13s;
 mod mentsu;
 mod parser;
 mod score;
@@ -20,7 +19,7 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "444m444p444s123m5p5p";
+    let s = "1122334455667p7p";
 
     let (i13s, _win_tile, win_method) = parser::parse(s);
 
