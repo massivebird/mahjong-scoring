@@ -122,6 +122,13 @@ pub fn yakuman() -> Vec<Yaku> {
             open_score: OpenScore::Full,
             f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.entirely_terminal())),
         },
+        Yaku {
+            name: "Suuankou".to_string(),
+            desc: "Four concealed triplets".to_string(),
+            han: 99,
+            open_score: OpenScore::Illegal,
+            f: Box::new(|vec_mn| vec_mn.iter().filter(|m| m.closed() && m.triplet()).count() >= 4),
+        },
     ]
 }
 
