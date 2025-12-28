@@ -100,6 +100,10 @@ impl Mentsu {
         }
     }
 
+    pub const fn closed(self) -> bool {
+        !self.open
+    }
+
     pub fn entirely_terminal(self) -> bool {
         match self.kind {
             Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.terminal(),

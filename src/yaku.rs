@@ -63,6 +63,13 @@ pub fn regular_yaku() -> Vec<Yaku> {
             }),
         },
         Yaku {
+            name: "Sanankou".to_string(),
+            desc: "Three concealed triplets".to_string(),
+            han: 2,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| vec_mn.iter().filter(|m| m.closed() && m.triplet()).count() >= 3),
+        },
+        Yaku {
             name: "Toitoi".to_string(),
             desc: "All triplets".to_string(),
             han: 2,
