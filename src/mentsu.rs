@@ -3,7 +3,13 @@ use std::collections::BTreeMap;
 use crate::tile::Tile;
 
 #[derive(Debug, Copy, Clone)]
-pub enum Mentsu {
+pub struct Mentsu {
+    pub kind: Kind,
+    pub open: bool,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum Kind {
     Triplet(Tile),
     Quad(Tile),
     Sequence(Tile, Tile, Tile),
@@ -11,41 +17,56 @@ pub enum Mentsu {
 }
 
 impl Mentsu {
+    pub const fn new(kind: Kind) -> Self {
+        Self { kind, open: false }
+    }
+
+    pub fn contains(self, t: Tile) -> bool {
+        match self.kind {
+            Kind::Triplet(h) | Kind::Quad(h) | Kind::Pair(h) => t == h,
+            Kind::Sequence(h0, h1, h2) => t == h0 || t == h1 || t == h2,
+        }
+    }
+
+    pub const fn make_open(&mut self) {
+        self.open = true;
+    }
+
     pub fn contains_terminal(self) -> bool {
-        match self {
-            Self::Triplet(t) | Self::Quad(t) | Self::Pair(t) => t.terminal(),
-            Self::Sequence(t0, t1, t2) => t0.terminal() || t1.terminal() || t2.terminal(),
+        match self.kind {
+            Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.terminal(),
+            Kind::Sequence(t0, t1, t2) => t0.terminal() || t1.terminal() || t2.terminal(),
         }
     }
 
     pub fn entirely_terminal(self) -> bool {
-        match self {
-            Self::Triplet(t) | Self::Quad(t) | Self::Pair(t) => t.terminal(),
-            Self::Sequence(_, _, _) => false,
+        match self.kind {
+            Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.terminal(),
+            Kind::Sequence(_, _, _) => false,
         }
     }
 
     pub fn honor(self) -> bool {
-        match self {
-            Self::Triplet(t) | Self::Quad(t) | Self::Pair(t) => t.honor(),
-            Self::Sequence(_, _, _) => false,
+        match self.kind {
+            Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.honor(),
+            Kind::Sequence(_, _, _) => false,
         }
     }
 
     pub const fn pair(self) -> bool {
-        matches!(self, Self::Pair(_))
+        matches!(self.kind, Kind::Pair(_))
     }
 
     pub const fn quad(self) -> bool {
-        matches!(self, Self::Quad(_))
+        matches!(self.kind, Kind::Quad(_))
     }
 
     pub const fn sequence(self) -> bool {
-        matches!(self, Self::Sequence(_, _, _))
+        matches!(self.kind, Kind::Sequence(_, _, _))
     }
 
     pub const fn triplet(self) -> bool {
-        matches!(self, Self::Triplet(_) | Self::Quad(_))
+        matches!(self.kind, Kind::Triplet(_) | Kind::Quad(_))
     }
 }
 
@@ -82,7 +103,7 @@ fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Ve
         for m in rec_build(
             &decrement(counts, &[this; 2]),
             i,
-            &with(mentsu_rn, Mentsu::Pair(this)),
+            &with(mentsu_rn, Mentsu::new(Kind::Pair(this))),
         ) {
             ans.push(m);
         }
@@ -93,7 +114,7 @@ fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Ve
         for m in rec_build(
             &decrement(counts, &[this; 3]),
             i,
-            &with(mentsu_rn, Mentsu::Triplet(this)),
+            &with(mentsu_rn, Mentsu::new(Kind::Triplet(this))),
         ) {
             ans.push(m);
         }
@@ -104,7 +125,7 @@ fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Ve
         for m in rec_build(
             &decrement(counts, &[this; 4]),
             i,
-            &with(mentsu_rn, Mentsu::Quad(this)),
+            &with(mentsu_rn, Mentsu::new(Kind::Quad(this))),
         ) {
             ans.push(m);
         }
@@ -123,7 +144,11 @@ fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Ve
             i,
             &with(
                 mentsu_rn,
-                Mentsu::Sequence(this, this.add(1).unwrap(), this.add(2).unwrap()),
+                Mentsu::new(Kind::Sequence(
+                    this,
+                    this.add(1).unwrap(),
+                    this.add(2).unwrap(),
+                )),
             ),
         ) {
             ans.push(m);

@@ -5,7 +5,6 @@ use std::hash::Hash;
 pub struct Tile {
     pub value: u32,
     pub suit: Suit,
-    pub win_method: Option<WinMethod>,
 }
 
 impl PartialEq for Tile {
@@ -41,12 +40,8 @@ pub enum WinMethod {
 }
 
 impl Tile {
-    pub const fn new(value: u32, suit: Suit, win_method: Option<WinMethod>) -> Self {
-        Self {
-            value,
-            suit,
-            win_method,
-        }
+    pub const fn new(value: u32, suit: Suit) -> Self {
+        Self { value, suit }
     }
 
     /// Returns `true` if both tiles can appear in the same sequence.
@@ -78,7 +73,6 @@ impl Tile {
             Some(Self {
                 value,
                 suit: self.suit,
-                win_method: None,
             })
         }
     }

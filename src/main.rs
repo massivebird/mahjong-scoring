@@ -1,10 +1,20 @@
-use self::tile::WinMethod;
-use self::{mentsu::Mentsu, suit::Suit, tile::Tile, yaku::regular_yaku};
+use self::{
+    mentsu::{Kind, Mentsu},
+    suit::Suit,
+    tile::Tile,
+    yaku::regular_yaku,
+};
 
 mod mentsu;
 mod suit;
 mod tile;
 mod yaku;
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub enum WinMethod {
+    Tsumo,
+    Ron,
+}
 
 fn main() {
     let s = "123m456m789m123m9m9m";
@@ -12,24 +22,28 @@ fn main() {
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
 
-    hand_tiles.push(Tile::new(
-        s.chars().nth(s.len() - 2).unwrap().to_digit(10).unwrap(),
-        Suit::from(s.chars().nth(s.len() - 1).unwrap()),
-        match s.chars().nth(s.len() - 3) {
-            Some(c) if c.is_whitespace() => Some(WinMethod::Ron),
-            Some(_) => Some(WinMethod::Tsumo),
-            _ => None,
-        },
-    ));
+    let (winning_tile, win_method) = {
+        let t = Tile::new(
+            s.chars().nth(s.len() - 2).unwrap().to_digit(10).unwrap(),
+            Suit::from(s.chars().nth(s.len() - 1).unwrap()),
+        );
 
-    for c in s.chars().take(s.len() - 2) {
+        match s.chars().nth(s.len() - 3) {
+            Some(c) if c.is_whitespace() => (t, WinMethod::Ron),
+            _ => (t, WinMethod::Tsumo),
+        }
+    };
+
+    dbg!((winning_tile, win_method));
+
+    for c in s.chars() {
         if c.is_ascii_digit() {
             suit_vals.push(c.to_digit(10).unwrap());
             continue;
         }
 
         for val in &suit_vals {
-            hand_tiles.push(Tile::new(*val, Suit::from(c), None));
+            hand_tiles.push(Tile::new(*val, Suit::from(c)));
         }
 
         suit_vals.clear();
@@ -47,13 +61,13 @@ fn main() {
         v.iter()
             .filter(|m| {
                 matches!(
-                    m,
-                    Mentsu::Triplet(_) | Mentsu::Quad(_) | Mentsu::Sequence(_, _, _)
+                    m.kind,
+                    Kind::Triplet(_) | Kind::Quad(_) | Kind::Sequence(_, _, _)
                 )
             })
             .count()
             == 4
-            && v.iter().filter(|m| matches!(m, Mentsu::Pair(_))).count() == 1
+            && v.iter().filter(|m| matches!(m.kind, Kind::Pair(_))).count() == 1
     });
 
     println!("{} winning.", i13s.len());
