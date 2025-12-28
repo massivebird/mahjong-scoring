@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 use self::{
     mentsu::{Kind, Mentsu, WinWait},
     suit::Suit,
@@ -17,7 +19,7 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "123m456m789m123m9m9m";
+    let s = "123m123m789m456s3m3m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -89,7 +91,7 @@ fn build_i13s_open(
     win_tile: Tile,
     win_method: WinMethod,
 ) -> Vec<Vec<Mentsu>> {
-    let mut ans: Vec<Vec<Mentsu>> = Vec::new();
+    let mut ans: HashSet<Vec<Mentsu>> = HashSet::new();
 
     let mut i13s = i13s.to_owned();
 
@@ -132,10 +134,13 @@ fn build_i13s_open(
                     Kind::Quad(_) => unimplemented!(),
                 }
 
-                ans.push(h);
+                // By sorting before inserting, hands are effectively
+                // hashed/compared as unordered collections.
+                h.sort();
+                ans.insert(h);
             }
         }
     }
 
-    ans
+    ans.into_iter().collect()
 }

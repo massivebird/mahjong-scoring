@@ -1,14 +1,14 @@
 use crate::tile::Tile;
 use std::collections::BTreeMap;
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Mentsu {
     pub kind: Kind,
     pub open: bool,
     pub win_wait: Option<WinWait>,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum WinWait {
     Ryanmen,
     Kanchan,
@@ -17,7 +17,7 @@ pub enum WinWait {
     Shanpon,
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
     Triplet(Tile),
     Quad(Tile),
