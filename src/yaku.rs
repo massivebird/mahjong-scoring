@@ -71,6 +71,35 @@ pub fn regular_yaku() -> Vec<Yaku> {
             f: Box::new(|vec_mn| vec_mn.iter().filter(|m| m.closed() && m.triplet()).count() >= 3),
         },
         Yaku {
+            name: "Ryanpeikou".to_string(),
+            desc: "Twin identical sequences".to_string(),
+            han: 3,
+            open_score: OpenScore::Illegal,
+            f: Box::new(|vec_mn| {
+                let mut twin_idx: Option<[usize; 2]> = None;
+                for (i, m) in vec_mn.iter().enumerate().filter(|(_, m)| m.sequence()) {
+                    // Don't double-match!
+                    if twin_idx.is_some_and(|a| a.contains(&i)) {
+                        continue;
+                    }
+
+                    if let Some((j, _)) = vec_mn
+                        .iter()
+                        .enumerate()
+                        .find(|(j, other)| *j != i && *other == m)
+                    {
+                        if twin_idx.is_some() {
+                            return true;
+                        }
+
+                        twin_idx = Some([i, j]);
+                    }
+                }
+
+                false
+            }),
+        },
+        Yaku {
             name: "Iipeikou".to_string(),
             desc: "Identical sequences".to_string(),
             han: 1,
