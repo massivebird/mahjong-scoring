@@ -113,4 +113,25 @@ impl Mentsu {
     pub const fn triplet(self) -> bool {
         matches!(self.kind, Kind::Triplet(_) | Kind::Quad(_))
     }
+
+    /// Returns `true` if and only if both mentsu fulfill all 3 conditions:
+    ///
+    /// (1) Same type (e.g. triplet, pair)
+    /// (2) Identical values
+    /// (3) Different suits
+    ///
+    /// Used for scoring sanshoku doujun and sanshoku doukou.
+    pub fn eq_diff_suits(self, other: Self) -> bool {
+        if self.suit() == other.suit() {
+            return false;
+        }
+
+        match (self.kind, other.kind) {
+            (Kind::Sequence(a, _, _), Kind::Sequence(b, _, _))
+            | (Kind::Triplet(a), Kind::Triplet(b))
+            | (Kind::Quad(a), Kind::Quad(b))
+            | (Kind::Pair(a), Kind::Pair(b)) => a.value == b.value,
+            _ => false,
+        }
+    }
 }

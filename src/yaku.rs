@@ -164,6 +164,27 @@ pub fn regular_yaku() -> Vec<Yaku> {
             }),
         },
         Yaku {
+            name: "Sanshoku doujun".to_string(),
+            desc: "Three colors, same sequence".to_string(),
+            han: 2,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| {
+                for (i, m) in vec_mn.iter().enumerate().filter(|(i, m)| m.sequence()) {
+                    if vec_mn
+                        .iter()
+                        .enumerate()
+                        .filter(|(j, n)| *j != i && m.eq_diff_suits(**n))
+                        .count()
+                        >= 2
+                    {
+                        return true;
+                    }
+                }
+
+                false
+            }),
+        },
+        Yaku {
             name: "Toitoi".to_string(),
             desc: "All triplets".to_string(),
             han: 2,
