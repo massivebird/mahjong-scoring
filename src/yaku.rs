@@ -71,6 +71,25 @@ pub fn regular_yaku() -> Vec<Yaku> {
             f: Box::new(|vec_mn| vec_mn.iter().filter(|m| m.closed() && m.triplet()).count() >= 3),
         },
         Yaku {
+            name: "Iipeikou".to_string(),
+            desc: "Identical sequences".to_string(),
+            han: 1,
+            open_score: OpenScore::Illegal,
+            f: Box::new(|vec_mn| {
+                for (i, m) in vec_mn.iter().enumerate().filter(|(_, m)| m.sequence()) {
+                    if vec_mn
+                        .iter()
+                        .enumerate()
+                        .any(|(j, other)| j != i && other == m)
+                    {
+                        return true;
+                    }
+                }
+
+                false
+            }),
+        },
+        Yaku {
             name: "Toitoi".to_string(),
             desc: "All triplets".to_string(),
             han: 2,

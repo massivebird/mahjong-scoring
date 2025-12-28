@@ -4,11 +4,25 @@ use crate::{suit::Suit, tile::Tile};
 
 pub mod kind;
 
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(Debug, Copy, Clone, Eq, PartialOrd, Ord)]
 pub struct Mentsu {
     pub kind: Kind,
     pub open: bool,
     pub win_wait: Option<WinWait>,
+}
+
+impl PartialEq for Mentsu {
+    fn eq(&self, other: &Self) -> bool {
+        self.kind == other.kind
+    }
+}
+
+impl std::hash::Hash for Mentsu {
+    fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+        self.kind.hash(state);
+        self.open.hash(state);
+        self.win_wait.hash(state);
+    }
 }
 
 impl std::fmt::Display for Mentsu {

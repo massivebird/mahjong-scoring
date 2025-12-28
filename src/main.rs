@@ -20,7 +20,7 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "123m56m789m456s77s4m";
+    let s = "123m56m789m456m77s4m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
