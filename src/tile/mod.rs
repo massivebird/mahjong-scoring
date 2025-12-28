@@ -70,7 +70,7 @@ impl Tile {
     }
 
     pub fn simple(self) -> bool {
-        !self.terminal()
+        !(self.terminal() || self.honor())
     }
 
     pub const fn add(self, rhs: u32) -> Option<Self> {

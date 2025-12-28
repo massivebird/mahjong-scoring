@@ -18,9 +18,10 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "1122334455667p7p";
+    let s = "19m19s19p123456z1s";
 
-    let (i13s, _win_tile, win_method) = parser::parse(s);
+    let (tiles, win_tile, win_method) = parser::parse(s);
+    let i13s = parser::interpret(&tiles, win_tile, win_method);
 
     println!("{} winning interpretation(s):", i13s.len());
     for hand in &i13s {
@@ -34,6 +35,13 @@ fn main() {
         "{} fu",
         i13s.iter().map(|hand| fu(hand, win_method)).max().unwrap()
     );
+
+    println!("Weirdos?");
+    for w in yaku::WEIRD_YAKU {
+        if (w.f)(&tiles) {
+            println!("{}", w.name);
+        }
+    }
 
     println!("Best yaku combo:");
     for yaku in i13s

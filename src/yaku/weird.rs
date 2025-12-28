@@ -1,4 +1,3 @@
-use crate::mentsu::get_tiles;
 use crate::tile::Tile;
 
 use super::OpenScore;
@@ -40,31 +39,23 @@ pub static WEIRD_YAKU: &[WeirdYaku] = &[
         han: 99,
         open_score: OpenScore::Illegal,
         f: |tiles| {
-            let mut found_pair = false;
+            let mut pair_idx: Option<[usize; 2]> = None;
 
             for (i, t) in tiles.iter().enumerate() {
                 if t.simple() {
                     return false;
                 }
 
-                match tiles
-                    .iter()
-                    .enumerate()
-                    .filter(|(j, o)| *j != i && *o == t)
-                    .count()
-                {
-                    1 => {
-                        if found_pair {
-                            return false;
-                        }
-                        found_pair = true;
+                for (j, _) in tiles.iter().enumerate().filter(|(j, o)| *j != i && *o == t) {
+                    match pair_idx {
+                        Some([a, b]) if j == a || j == b => (),
+                        Some(_) => return false,
+                        None => pair_idx = Some([i, j]),
                     }
-                    0 => (),
-                    _ => return false,
                 }
             }
 
-            found_pair
+            pair_idx.is_some()
         },
     },
 ];

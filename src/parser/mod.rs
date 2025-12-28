@@ -5,7 +5,7 @@ use crate::tile::Tile;
 
 mod i13s;
 
-pub fn parse(s: &str) -> (Vec<Vec<Mentsu>>, Tile, WinMethod) {
+pub fn parse(s: &str) -> (Vec<Tile>, Tile, WinMethod) {
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
 
@@ -38,7 +38,11 @@ pub fn parse(s: &str) -> (Vec<Vec<Mentsu>>, Tile, WinMethod) {
 
     hand_tiles.sort();
 
+    (hand_tiles, win_tile, win_method)
+}
+
+pub fn interpret(hand_tiles: &[Tile], win_tile: Tile, win_method: WinMethod) -> Vec<Vec<Mentsu>> {
     let i13s = i13s::build(&hand_tiles, win_tile, win_method);
 
-    (i13s, win_tile, win_method)
+    i13s
 }
