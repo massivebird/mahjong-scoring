@@ -41,3 +41,4 @@ pub fn parse(s: &str) -> (Vec<Vec<Mentsu>>, Tile, WinMethod) {
 
     (i13s, win_tile, win_method)
 }
+

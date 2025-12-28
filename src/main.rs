@@ -20,7 +20,7 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "123m56m789m456m77s4m";
+    let s = "123m56m789m456m77s 4m";
 
     let (i13s, win_tile, win_method) = parser::parse(s);
 

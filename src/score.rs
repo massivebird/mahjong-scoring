@@ -38,5 +38,9 @@ pub fn fu(hand: &[Mentsu], win_method: WinMethod) -> u32 {
         total += pts;
     }
 
-    total + (10 - total % 10) // Round to nearest 10
+    if total % 10 == 0 {
+        total
+    } else {
+        total + (10 - total % 10) // Round to nearest 10
+    }
 }
