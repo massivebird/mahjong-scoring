@@ -1,32 +1,6 @@
+use super::{OpenScore, Yaku};
+use crate::{mentsu::kind::Kind, suit::Suit, win_wait::WinWait};
 use strum::IntoEnumIterator;
-
-use crate::mentsu::{Mentsu, kind::Kind};
-use crate::suit::Suit;
-use crate::win_wait::WinWait;
-
-pub struct Yaku {
-    pub name: &'static str,
-    pub desc: &'static str,
-    pub han: u32,
-    pub open_score: OpenScore,
-    pub f: fn(&[Mentsu]) -> bool,
-}
-
-impl Yaku {
-    pub const fn name(&self) -> &str {
-        self.name
-    }
-
-    pub fn valid_for(&self, mentsu: &[Mentsu]) -> bool {
-        (self.f)(mentsu)
-    }
-}
-
-pub enum OpenScore {
-    Full,
-    Reduced,
-    Illegal,
-}
 
 pub static REGULAR_YAKU: &[Yaku] = &[
     Yaku {
@@ -238,47 +212,5 @@ pub static REGULAR_YAKU: &[Yaku] = &[
 
             false
         },
-    },
-];
-
-pub static YAKUMAN: &[Yaku] = &[
-    Yaku {
-        name: "Tsuuiisou",
-        desc: "All honors",
-        han: 99,
-        open_score: OpenScore::Full,
-        f: |vec_mn| vec_mn.iter().all(|m| m.honor()),
-    },
-    Yaku {
-        name: "Chinroutou",
-        desc: "All terminals",
-        han: 99,
-        open_score: OpenScore::Full,
-        f: |vec_mn| vec_mn.iter().all(|m| m.entirely_terminal()),
-    },
-    Yaku {
-        name: "Suuankou",
-        desc: "Four concealed triplets",
-        han: 99,
-        open_score: OpenScore::Illegal,
-        f: |vec_mn| vec_mn.iter().filter(|m| m.closed() && m.triplet()).count() >= 4,
-    },
-];
-
-/// These are tougher to evaluate with regular mentsu parsing.
-pub static WEIRD_YAKU: &[Yaku] = &[
-    Yaku {
-        name: "Chiitoi",
-        desc: "Seven (7) pairs",
-        han: 2,
-        open_score: OpenScore::Illegal,
-        f: |vec_mn| vec_mn.iter().filter(|m| m.pair()).count() == 7,
-    },
-    Yaku {
-        name: "Kokushi musou",
-        desc: "13 terminals/honors + a copy of one",
-        han: 99,
-        open_score: OpenScore::Illegal,
-        f: |_| true, // Must be early-evaluated
     },
 ];
