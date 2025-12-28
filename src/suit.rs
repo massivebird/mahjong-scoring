@@ -16,8 +16,8 @@ impl std::fmt::Display for Suit {
             match self {
                 Self::Man => "m",
                 Self::Pin => "p",
-                Suit::Sou => "s",
-                Suit::Honor => "z",
+                Self::Sou => "s",
+                Self::Honor => "z",
             }
         )
     }
