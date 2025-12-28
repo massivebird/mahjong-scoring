@@ -53,10 +53,6 @@ fn main() {
 
     let mut i13s = mentsu::build_mentsu(&hand_tiles);
 
-    print!("{} total interpretations, ", i13s.len());
-
-    dbg!(&i13s);
-
     i13s.retain(|v| {
         v.iter()
             .filter(|m| {
@@ -70,7 +66,11 @@ fn main() {
             && v.iter().filter(|m| matches!(m.kind, Kind::Pair(_))).count() == 1
     });
 
-    println!("{} winning.", i13s.len());
+    let v = build_i13s_open(&i13s, win_tile, win_method);
+
+    dbg!(&v);
+
+    println!("{} winning interpretations.", v.len());
 
     let yaku = regular_yaku();
 
@@ -82,9 +82,6 @@ fn main() {
             }
         }
     }
-
-    let v = build_i13s_open(&i13s, win_tile, win_method);
-    dbg!(v);
 }
 
 fn build_i13s_open(
