@@ -7,7 +7,6 @@ use self::{
 mod mentsu;
 mod parser;
 mod score;
-mod suit;
 mod tile;
 mod win_wait;
 mod yaku;

@@ -1,6 +1,6 @@
 use self::kind::Kind;
 use crate::win_wait::WinWait;
-use crate::{suit::Suit, tile::Tile};
+use crate::tile::{Tile, Suit};
 
 pub mod kind;
 

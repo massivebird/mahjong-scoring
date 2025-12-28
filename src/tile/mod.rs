@@ -1,5 +1,8 @@
-use crate::suit::Suit;
 use std::hash::Hash;
+
+mod suit;
+
+pub use suit::{Suit, SuitIter};
 
 #[derive(Debug, Copy, Clone, Eq, Ord)]
 pub struct Tile {

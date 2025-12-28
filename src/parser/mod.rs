@@ -1,7 +1,7 @@
+use crate::WinMethod;
 use crate::mentsu::Mentsu;
-use crate::suit::Suit;
+use crate::tile::Suit;
 use crate::tile::Tile;
-use crate::{WinMethod};
 
 mod i13s;
 
