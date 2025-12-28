@@ -5,7 +5,7 @@ pub struct Yaku {
     desc: String,
     han: u32,
     open_score: OpenScore,
-    f: Box<dyn Fn(Vec<Mentsu>) -> bool>,
+    f: Box<dyn Fn(&[Mentsu]) -> bool>,
 }
 
 impl Yaku {
@@ -13,7 +13,7 @@ impl Yaku {
         &self.name
     }
 
-    pub fn valid_for(&self, mentsu: Vec<Mentsu>) -> bool {
+    pub fn valid_for(&self, mentsu: &[Mentsu]) -> bool {
         (self.f)(mentsu)
     }
 }

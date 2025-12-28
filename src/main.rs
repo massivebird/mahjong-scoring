@@ -79,7 +79,7 @@ fn main() {
     println!("Matching yaku:");
     for y in yaku {
         for m in &i13s {
-            if y.valid_for(m.clone()) {
+            if y.valid_for(m) {
                 println!("{}", y.name());
             }
         }
