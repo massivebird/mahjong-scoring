@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use self::{
     mentsu::{Kind, Mentsu, WinWait},
     suit::Suit,
@@ -7,6 +5,7 @@ use self::{
     yaku::{Yaku, regular_yaku},
 };
 
+mod i13s;
 mod mentsu;
 mod suit;
 mod tile;
@@ -53,25 +52,10 @@ fn main() {
 
     hand_tiles.sort();
 
-    let mut i13s = mentsu::build_mentsu(&hand_tiles);
+    let i13s = i13s::build(&hand_tiles, win_tile, win_method);
 
-    i13s.retain(|v| {
-        v.iter()
-            .filter(|m| {
-                matches!(
-                    m.kind,
-                    Kind::Triplet(_) | Kind::Quad(_) | Kind::Sequence(_, _, _)
-                )
-            })
-            .count()
-            == 4
-            && v.iter().filter(|m| matches!(m.kind, Kind::Pair(_))).count() == 1
-    });
-
-    let v = build_i13s_open(&i13s, win_tile, win_method);
-
-    println!("{} winning interpretation(s):", v.len());
-    for hand in &v {
+    println!("{} winning interpretation(s):", i13s.len());
+    for hand in &i13s {
         for m in hand {
             print!("{m}, ");
         }
@@ -80,11 +64,11 @@ fn main() {
 
     println!(
         "{} fu",
-        v.iter().map(|hand| fu(hand, win_method)).max().unwrap()
+        i13s.iter().map(|hand| fu(hand, win_method)).max().unwrap()
     );
 
     println!("Best yaku combo:");
-    for yaku in v
+    for yaku in i13s
         .iter()
         .map(|hand| valid_yaku(hand))
         .max_by_key(|y| y.iter().map(|y| y.han).sum::<u32>())
@@ -140,63 +124,4 @@ fn fu(hand: &[Mentsu], win_method: WinMethod) -> u32 {
     }
 
     total + (10 - total % 10) // Round to nearest 10
-}
-
-fn build_i13s_open(
-    i13s: &[Vec<Mentsu>],
-    win_tile: Tile,
-    win_method: WinMethod,
-) -> Vec<Vec<Mentsu>> {
-    let mut ans: HashSet<Vec<Mentsu>> = HashSet::new();
-
-    let mut i13s = i13s.to_owned();
-
-    for hand in &mut i13s {
-        for (i, m) in hand.iter().enumerate() {
-            if m.contains(win_tile) {
-                // Push a copy of this hand with this mentsu as open.
-                let mut h = hand.clone();
-
-                if win_method == WinMethod::Ron {
-                    h[i].set_open(true);
-                }
-
-                let mut set_wait = |wait| h[i].set_win_wait(Some(wait));
-
-                match m.kind {
-                    // Tanki
-                    Kind::Pair(_) => set_wait(WinWait::Tanki),
-
-                    // Shanpon
-                    Kind::Triplet(_) => set_wait(WinWait::Shanpon),
-
-                    // Kanchan
-                    Kind::Sequence(_, mid, _) if win_tile == mid => {
-                        set_wait(WinWait::Kanchan);
-                    }
-
-                    // Penchan
-                    Kind::Sequence(left, _, right)
-                        if win_tile == left && right.terminal()
-                            || win_tile == right && left.terminal() =>
-                    {
-                        set_wait(WinWait::Penchan);
-                    }
-
-                    // Ryanmen
-                    Kind::Sequence(_, _, _) => set_wait(WinWait::Ryanmen),
-
-                    // Where do quads fit into this? idk
-                    Kind::Quad(_) => unimplemented!(),
-                }
-
-                // By sorting before inserting, hands are effectively
-                // hashed/compared as unordered collections.
-                h.sort();
-                ans.insert(h);
-            }
-        }
-    }
-
-    ans.into_iter().collect()
 }

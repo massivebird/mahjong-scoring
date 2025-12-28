@@ -1,6 +1,4 @@
-use crate::suit::Suit;
-use crate::tile::Tile;
-use std::collections::BTreeMap;
+use crate::{suit::Suit, tile::Tile};
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Mentsu {
@@ -38,13 +36,17 @@ pub enum WinWait {
 
 impl std::fmt::Display for WinWait {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", match self {
-            Self::Ryanmen => "RMN",
-            Self::Kanchan => "KCN",
-            Self::Penchan => "PCN",
-            Self::Tanki => "TNK",
-            Self::Shanpon => "SHP",
-        })
+        write!(
+            f,
+            "{}",
+            match self {
+                Self::Ryanmen => "RMN",
+                Self::Kanchan => "KCN",
+                Self::Penchan => "PCN",
+                Self::Tanki => "TNK",
+                Self::Shanpon => "SHP",
+            }
+        )
     }
 }
 
@@ -139,102 +141,4 @@ impl Mentsu {
     pub const fn triplet(self) -> bool {
         matches!(self.kind, Kind::Triplet(_) | Kind::Quad(_))
     }
-}
-
-pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
-    let mut counts: BTreeMap<Tile, u32> = BTreeMap::new();
-
-    for t in as_tiles {
-        counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
-    }
-
-    rec_build(&counts, 0, &[])
-}
-
-/// Recursively computes possible interpretations of a hand.
-fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
-    let mut ans: Vec<Vec<Mentsu>> = vec![];
-
-    // Check if we've exhausted all tiles.
-    let Some((&this, &this_count)) = counts.iter().nth(i) else {
-        return vec![mentsu_rn.to_vec()];
-    };
-
-    // This tile has been exhausted. Try the next one.
-    if this_count == 0 {
-        return rec_build(counts, i + 1, mentsu_rn);
-    }
-
-    // Pair
-    if this_count >= 2 {
-        for m in rec_build(
-            &decrement(counts, &[this; 2]),
-            i,
-            &with(mentsu_rn, Mentsu::new(Kind::Pair(this))),
-        ) {
-            ans.push(m);
-        }
-    }
-
-    // Triplet
-    if this_count >= 3 {
-        for m in rec_build(
-            &decrement(counts, &[this; 3]),
-            i,
-            &with(mentsu_rn, Mentsu::new(Kind::Triplet(this))),
-        ) {
-            ans.push(m);
-        }
-    }
-
-    // Quad
-    if this_count >= 4 {
-        for m in rec_build(
-            &decrement(counts, &[this; 4]),
-            i,
-            &with(mentsu_rn, Mentsu::new(Kind::Quad(this))),
-        ) {
-            ans.push(m);
-        }
-    }
-
-    // Sequence
-    if this
-        .add(1)
-        .is_some_and(|t| counts.get(&t).is_some_and(|v| *v >= 1))
-        && this
-            .add(2)
-            .is_some_and(|t| counts.get(&t).is_some_and(|v| *v >= 1))
-    {
-        for m in rec_build(
-            &decrement(counts, &[this, this.add(1).unwrap(), this.add(2).unwrap()]),
-            i,
-            &with(
-                mentsu_rn,
-                Mentsu::new(Kind::Sequence(
-                    this,
-                    this.add(1).unwrap(),
-                    this.add(2).unwrap(),
-                )),
-            ),
-        ) {
-            ans.push(m);
-        }
-    }
-
-    ans
-}
-
-fn with(vec: &[Mentsu], val: Mentsu) -> Vec<Mentsu> {
-    [vec, &[val]].concat()
-}
-
-fn decrement(counts: &BTreeMap<Tile, u32>, tiles: &[Tile]) -> BTreeMap<Tile, u32> {
-    let mut res = counts.clone();
-
-    for t in tiles {
-        res.entry(*t).and_modify(|v| *v -= 1);
-    }
-
-    res
 }
