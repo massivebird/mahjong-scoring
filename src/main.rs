@@ -1,13 +1,12 @@
 use self::{
     mentsu::Mentsu,
     score::fu,
-    suit::Suit,
-    tile::Tile,
     yaku::{Yaku, regular_yaku},
 };
 
 mod i13s;
 mod mentsu;
+mod parser;
 mod score;
 mod suit;
 mod tile;
@@ -23,39 +22,7 @@ pub enum WinMethod {
 fn main() {
     let s = "123m56m789m456m77s4m";
 
-    let mut suit_vals: Vec<u32> = Vec::new();
-    let mut hand_tiles: Vec<Tile> = Vec::new();
-
-    let (win_tile, win_method) = {
-        let t = Tile::new(
-            s.chars().nth(s.len() - 2).unwrap().to_digit(10).unwrap(),
-            Suit::from(s.chars().nth(s.len() - 1).unwrap()),
-        );
-
-        match s.chars().nth(s.len() - 3) {
-            Some(c) if c.is_whitespace() => (t, WinMethod::Ron),
-            _ => (t, WinMethod::Tsumo),
-        }
-    };
-
-    dbg!((win_tile, win_method));
-
-    for c in s.chars() {
-        if c.is_ascii_digit() {
-            suit_vals.push(c.to_digit(10).unwrap());
-            continue;
-        }
-
-        for val in &suit_vals {
-            hand_tiles.push(Tile::new(*val, Suit::from(c)));
-        }
-
-        suit_vals.clear();
-    }
-
-    hand_tiles.sort();
-
-    let i13s = i13s::build(&hand_tiles, win_tile, win_method);
+    let (i13s, win_tile, win_method) = parser::parse(s);
 
     println!("{} winning interpretation(s):", i13s.len());
     for hand in &i13s {
