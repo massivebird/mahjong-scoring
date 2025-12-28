@@ -1,7 +1,8 @@
 use strum::IntoEnumIterator;
 
-use crate::mentsu::{Kind, Mentsu, WinWait};
+use crate::mentsu::{Mentsu, kind::Kind};
 use crate::suit::Suit;
+use crate::win_wait::WinWait;
 
 pub struct Yaku {
     pub name: String,

@@ -1,4 +1,8 @@
+use self::kind::Kind;
+use crate::win_wait::WinWait;
 use crate::{suit::Suit, tile::Tile};
+
+pub mod kind;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct Mentsu {
@@ -22,52 +26,6 @@ impl std::fmt::Display for Mentsu {
         }
 
         write!(f, "{buf}")
-    }
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum WinWait {
-    Ryanmen,
-    Kanchan,
-    Penchan,
-    Tanki,
-    Shanpon,
-}
-
-impl std::fmt::Display for WinWait {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Self::Ryanmen => "RYN",
-                Self::Kanchan => "KAN",
-                Self::Penchan => "PEN",
-                Self::Tanki => "TAN",
-                Self::Shanpon => "SHA",
-            }
-        )
-    }
-}
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
-pub enum Kind {
-    Triplet(Tile),
-    Quad(Tile),
-    Sequence(Tile, Tile, Tile),
-    Pair(Tile),
-}
-
-impl std::fmt::Display for Kind {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let s = match self {
-            Self::Triplet(tile) => format!("Tr({tile})"),
-            Self::Quad(tile) => format!("Qd({tile})"),
-            Self::Sequence(t0, t1, t2) => format!("Sq({t0},{t1},{t2})"),
-            Self::Pair(tile) => format!("Pr({tile})"),
-        };
-
-        write!(f, "{s}")
     }
 }
 

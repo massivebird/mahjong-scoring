@@ -1,7 +1,8 @@
 use crate::{
     WinMethod,
-    mentsu::{Kind, Mentsu, WinWait},
+    mentsu::{Mentsu, kind::Kind},
     tile::Tile,
+    win_wait::WinWait,
 };
 use std::collections::{BTreeMap, HashSet};
 

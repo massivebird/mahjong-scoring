@@ -1,7 +1,8 @@
 use self::{
-    mentsu::{Kind, Mentsu, WinWait},
+    mentsu::{Mentsu, kind::Kind},
     suit::Suit,
     tile::Tile,
+    win_wait::WinWait,
     yaku::{Yaku, regular_yaku},
 };
 
@@ -9,6 +10,7 @@ mod i13s;
 mod mentsu;
 mod suit;
 mod tile;
+mod win_wait;
 mod yaku;
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
