@@ -64,6 +64,51 @@ pub fn regular_yaku() -> Vec<Yaku> {
             }),
         },
         Yaku {
+            name: "Yakuhai (White Dragon)".to_string(),
+            desc: "White dragon triplet".to_string(),
+            han: 1,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| {
+                vec_mn.iter().any(|m| {
+                    if let Kind::Triplet(t) = m.kind {
+                        return t.honor() && t.value == 5;
+                    }
+
+                    false
+                })
+            }),
+        },
+        Yaku {
+            name: "Yakuhai (Green Dragon)".to_string(),
+            desc: "Green dragon triplet".to_string(),
+            han: 1,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| {
+                vec_mn.iter().any(|m| {
+                    if let Kind::Triplet(t) = m.kind {
+                        return t.honor() && t.value == 6;
+                    }
+
+                    false
+                })
+            }),
+        },
+        Yaku {
+            name: "Yakuhai (Red Dragon)".to_string(),
+            desc: "Red dragon triplet".to_string(),
+            han: 2,
+            open_score: OpenScore::Full,
+            f: Box::new(|vec_mn| {
+                vec_mn.iter().any(|m| {
+                    if let Kind::Triplet(t) = m.kind {
+                        return t.honor() && t.value == 7;
+                    }
+
+                    false
+                })
+            }),
+        },
+        Yaku {
             name: "Sanankou".to_string(),
             desc: "Three concealed triplets".to_string(),
             han: 2,
