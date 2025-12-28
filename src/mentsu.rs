@@ -40,11 +40,11 @@ impl std::fmt::Display for WinWait {
             f,
             "{}",
             match self {
-                Self::Ryanmen => "RMN",
-                Self::Kanchan => "KCN",
-                Self::Penchan => "PCN",
-                Self::Tanki => "TNK",
-                Self::Shanpon => "SHP",
+                Self::Ryanmen => "RYN",
+                Self::Kanchan => "KAN",
+                Self::Penchan => "PEN",
+                Self::Tanki => "TAN",
+                Self::Shanpon => "SHA",
             }
         )
     }
