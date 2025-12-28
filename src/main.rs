@@ -1,7 +1,7 @@
 use self::{
     mentsu::Mentsu,
     score::fu,
-    yaku::{Yaku, regular_yaku},
+    yaku::{REGULAR_YAKU, Yaku},
 };
 
 mod i13s;
@@ -22,7 +22,7 @@ pub enum WinMethod {
 fn main() {
     let s = "444m444p444s123m5p5p";
 
-    let (i13s, win_tile, win_method) = parser::parse(s);
+    let (i13s, _win_tile, win_method) = parser::parse(s);
 
     println!("{} winning interpretation(s):", i13s.len());
     for hand in &i13s {
@@ -48,10 +48,10 @@ fn main() {
     }
 }
 
-fn valid_yaku(hand: &[Mentsu]) -> Vec<Yaku> {
+fn valid_yaku(hand: &[Mentsu]) -> Vec<&Yaku> {
     let mut ans = Vec::new();
 
-    for y in regular_yaku() {
+    for y in REGULAR_YAKU {
         if y.valid_for(hand) {
             ans.push(y);
         }
