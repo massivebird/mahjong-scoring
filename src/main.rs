@@ -4,7 +4,7 @@ use self::{
     mentsu::{Kind, Mentsu, WinWait},
     suit::Suit,
     tile::Tile,
-    yaku::regular_yaku,
+    yaku::{Yaku, regular_yaku},
 };
 
 mod mentsu;
@@ -19,7 +19,7 @@ pub enum WinMethod {
 }
 
 fn main() {
-    let s = "123m123m789m456s3m3m";
+    let s = "123m56m789m456s77s4m";
 
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
@@ -70,25 +70,40 @@ fn main() {
 
     let v = build_i13s_open(&i13s, win_tile, win_method);
 
-    dbg!(&v);
-
-    println!("{} winning interpretations.", v.len());
+    println!("{} winning interpretation(s):", v.len());
+    for hand in &v {
+        for m in hand {
+            print!("{m}, ");
+        }
+        println!();
+    }
 
     println!(
         "{} fu",
         v.iter().map(|hand| fu(hand, win_method)).max().unwrap()
     );
 
-    let yaku = regular_yaku();
+    println!("Best yaku combo:");
+    for yaku in v
+        .iter()
+        .map(|hand| valid_yaku(hand))
+        .max_by_key(|y| y.iter().map(|y| y.han).sum::<u32>())
+        .unwrap()
+    {
+        println!("{}", yaku.name);
+    }
+}
 
-    println!("Matching yaku:");
-    for y in yaku {
-        for m in &i13s {
-            if y.valid_for(m) {
-                println!("{}", y.name());
-            }
+fn valid_yaku(hand: &[Mentsu]) -> Vec<Yaku> {
+    let mut ans = Vec::new();
+
+    for y in regular_yaku() {
+        if y.valid_for(hand) {
+            ans.push(y);
         }
     }
+
+    ans
 }
 
 fn fu(hand: &[Mentsu], win_method: WinMethod) -> u32 {

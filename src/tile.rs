@@ -7,6 +7,12 @@ pub struct Tile {
     pub suit: Suit,
 }
 
+impl std::fmt::Display for Tile {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}{}", self.value, self.suit)
+    }
+}
+
 impl PartialEq for Tile {
     fn eq(&self, other: &Self) -> bool {
         self.value == other.value && self.suit == other.suit

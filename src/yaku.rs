@@ -1,11 +1,14 @@
-use crate::mentsu::Mentsu;
+use strum::IntoEnumIterator;
+
+use crate::mentsu::{Kind, Mentsu, WinWait};
+use crate::suit::Suit;
 
 pub struct Yaku {
-    name: String,
-    desc: String,
-    han: u32,
-    open_score: OpenScore,
-    f: Box<dyn Fn(&[Mentsu]) -> bool>,
+    pub name: String,
+    pub desc: String,
+    pub han: u32,
+    pub open_score: OpenScore,
+    pub f: Box<dyn Fn(&[Mentsu]) -> bool>,
 }
 
 impl Yaku {
@@ -48,13 +51,15 @@ pub fn regular_yaku() -> Vec<Yaku> {
             f: Box::new(|vec_mn| vec_mn.iter().all(|m| m.contains_terminal())),
         },
         Yaku {
-            name: "Pinfu (WIP)".to_string(),
-            desc: "Minimum fu; no triplets, non-honor pair, and ryanmen wait".to_string(),
+            name: "Pinfu".to_string(),
+            desc: "Minimum fu; no triplets, non-yakuhai pair, and ryanmen wait".to_string(),
             han: 1,
             open_score: OpenScore::Illegal,
             f: Box::new(|vec_mn| {
-                vec_mn.iter().all(|m| !m.triplet())
-                    && !vec_mn.iter().find(|m| m.pair()).unwrap().honor()
+                vec_mn.iter().all(|m| !m.triplet()) // No triplets
+                    && !vec_mn.iter().find(|m| m.pair()).unwrap().honor() // Non-honor*** pair FIX LATER
+                    && !vec_mn.iter().any(|m| m.open && m.win_wait.is_none()) // Menzenchin
+                    && vec_mn.iter().any(|m| m.win_wait.is_some_and(|w| w == WinWait::Ryanmen)) // Ryanmen
             }),
         },
         Yaku {
@@ -63,6 +68,33 @@ pub fn regular_yaku() -> Vec<Yaku> {
             han: 2,
             open_score: OpenScore::Full,
             f: Box::new(|vec_mn| vec_mn.iter().all(|m| !m.sequence())),
+        },
+        Yaku {
+            name: "Ittsuu".to_string(),
+            desc: "Pure straight".to_string(),
+            han: 2,
+            open_score: OpenScore::Reduced,
+            f: Box::new(|vec_mn| {
+                let mut seqs = 0b000;
+
+                for s in Suit::iter() {
+                    seqs = 0;
+
+                    for m in vec_mn.iter().filter(|m| m.suit() == s) {
+                        if let Kind::Sequence(f, _, _) = m.kind
+                            && f.value == seqs * 3 + 1
+                        {
+                            seqs += 1;
+
+                            if seqs == 3 {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                false
+            }),
         },
     ]
 }

@@ -1,3 +1,4 @@
+use crate::suit::Suit;
 use crate::tile::Tile;
 use std::collections::BTreeMap;
 
@@ -6,6 +7,24 @@ pub struct Mentsu {
     pub kind: Kind,
     pub open: bool,
     pub win_wait: Option<WinWait>,
+}
+
+impl std::fmt::Display for Mentsu {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut buf = String::new();
+
+        if self.open {
+            buf.push_str("Op");
+        }
+
+        buf.push_str(&self.kind.to_string());
+
+        if let Some(wait) = self.win_wait {
+            buf.push_str(&wait.to_string());
+        }
+
+        write!(f, "{buf}")
+    }
 }
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -17,12 +36,37 @@ pub enum WinWait {
     Shanpon,
 }
 
+impl std::fmt::Display for WinWait {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", match self {
+            Self::Ryanmen => "RMN",
+            Self::Kanchan => "KCN",
+            Self::Penchan => "PCN",
+            Self::Tanki => "TNK",
+            Self::Shanpon => "SHP",
+        })
+    }
+}
+
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub enum Kind {
     Triplet(Tile),
     Quad(Tile),
     Sequence(Tile, Tile, Tile),
     Pair(Tile),
+}
+
+impl std::fmt::Display for Kind {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let s = match self {
+            Self::Triplet(tile) => format!("Tr({tile})"),
+            Self::Quad(tile) => format!("Qd({tile})"),
+            Self::Sequence(t0, t1, t2) => format!("Sq({t0},{t1},{t2})"),
+            Self::Pair(tile) => format!("Pr({tile})"),
+        };
+
+        write!(f, "{s}")
+    }
 }
 
 impl Mentsu {
@@ -63,6 +107,12 @@ impl Mentsu {
         }
     }
 
+    pub const fn suit(self) -> Suit {
+        match self.kind {
+            Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) | Kind::Sequence(t, _, _) => t.suit,
+        }
+    }
+
     pub fn honor(self) -> bool {
         match self.kind {
             Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.honor(),
@@ -94,21 +144,17 @@ pub fn build_mentsu(as_tiles: &[Tile]) -> Vec<Vec<Mentsu>> {
         counts.entry(*t).and_modify(|v| *v += 1).or_insert(1);
     }
 
-    dbg!(&counts);
-
     rec_build(&counts, 0, &[])
 }
 
 /// Recursively computes possible interpretations of a hand.
 fn rec_build(counts: &BTreeMap<Tile, u32>, i: usize, mentsu_rn: &[Mentsu]) -> Vec<Vec<Mentsu>> {
-    dbg!(mentsu_rn);
     let mut ans: Vec<Vec<Mentsu>> = vec![];
 
     // Check if we've exhausted all tiles.
     let Some((&this, &this_count)) = counts.iter().nth(i) else {
         return vec![mentsu_rn.to_vec()];
     };
-    dbg!((this, this_count));
 
     // This tile has been exhausted. Try the next one.
     if this_count == 0 {
