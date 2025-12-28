@@ -8,10 +8,10 @@ use crate::{
 pub fn fu(hand: &[Mentsu], win_method: WinMethod) -> u32 {
     let menzenchin = !hand.iter().any(|m| m.open && m.win_wait.is_none());
 
-    let mut total = if win_method == WinMethod::Ron && menzenchin {
-        30
-    } else {
-        20
+    let mut total = match (win_method, menzenchin) {
+        (WinMethod::Ron, true) => 30,
+        (WinMethod::Tsumo, _) => 22,
+        _ => 20,
     };
 
     for m in hand {
