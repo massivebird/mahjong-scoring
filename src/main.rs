@@ -1,5 +1,5 @@
 use self::{
-    mentsu::{Kind, Mentsu},
+    mentsu::{Kind, Mentsu, WinWait},
     suit::Suit,
     tile::Tile,
     yaku::regular_yaku,
@@ -22,7 +22,7 @@ fn main() {
     let mut suit_vals: Vec<u32> = Vec::new();
     let mut hand_tiles: Vec<Tile> = Vec::new();
 
-    let (winning_tile, win_method) = {
+    let (win_tile, win_method) = {
         let t = Tile::new(
             s.chars().nth(s.len() - 2).unwrap().to_digit(10).unwrap(),
             Suit::from(s.chars().nth(s.len() - 1).unwrap()),
@@ -34,7 +34,7 @@ fn main() {
         }
     };
 
-    dbg!((winning_tile, win_method));
+    dbg!((win_tile, win_method));
 
     for c in s.chars() {
         if c.is_ascii_digit() {
@@ -82,4 +82,63 @@ fn main() {
             }
         }
     }
+
+    let v = build_i13s_open(&i13s, win_tile, win_method);
+    dbg!(v);
+}
+
+fn build_i13s_open(
+    i13s: &[Vec<Mentsu>],
+    win_tile: Tile,
+    win_method: WinMethod,
+) -> Vec<Vec<Mentsu>> {
+    let mut ans: Vec<Vec<Mentsu>> = Vec::new();
+
+    let mut i13s = i13s.to_owned();
+
+    for hand in &mut i13s {
+        for (i, m) in hand.iter().enumerate() {
+            if m.contains(win_tile) {
+                // Push a copy of this hand with this mentsu as open.
+                let mut h = hand.clone();
+
+                if win_method == WinMethod::Ron {
+                    h[i].set_open(true);
+                }
+
+                let mut set_wait = |wait| h[i].set_win_wait(Some(wait));
+
+                match m.kind {
+                    // Tanki
+                    Kind::Pair(_) => set_wait(WinWait::Tanki),
+
+                    // Shanpon
+                    Kind::Triplet(_) => set_wait(WinWait::Shanpon),
+
+                    // Kanchan
+                    Kind::Sequence(_, mid, _) if win_tile == mid => {
+                        set_wait(WinWait::Kanchan);
+                    }
+
+                    // Penchan
+                    Kind::Sequence(left, _, right)
+                        if win_tile == left && right.terminal()
+                            || win_tile == right && left.terminal() =>
+                    {
+                        set_wait(WinWait::Penchan);
+                    }
+
+                    // Ryanmen
+                    Kind::Sequence(_, _, _) => set_wait(WinWait::Ryanmen),
+
+                    // Where do quads fit into this? idk
+                    Kind::Quad(_) => unimplemented!(),
+                }
+
+                ans.push(h);
+            }
+        }
+    }
+
+    ans
 }

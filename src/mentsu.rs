@@ -1,11 +1,20 @@
-use std::collections::BTreeMap;
-
 use crate::tile::Tile;
+use std::collections::BTreeMap;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Mentsu {
     pub kind: Kind,
     pub open: bool,
+    pub win_wait: Option<WinWait>,
+}
+
+#[derive(Debug, Copy, Clone)]
+pub enum WinWait {
+    Ryanmen,
+    Kanchan,
+    Penchan,
+    Tanki,
+    Shanpon,
 }
 
 #[derive(Debug, Copy, Clone)]
@@ -18,7 +27,11 @@ pub enum Kind {
 
 impl Mentsu {
     pub const fn new(kind: Kind) -> Self {
-        Self { kind, open: false }
+        Self {
+            kind,
+            open: false,
+            win_wait: None,
+        }
     }
 
     pub fn contains(self, t: Tile) -> bool {
@@ -28,8 +41,12 @@ impl Mentsu {
         }
     }
 
-    pub const fn make_open(&mut self) {
-        self.open = true;
+    pub const fn set_win_wait(&mut self, val: Option<WinWait>) {
+        self.win_wait = val;
+    }
+
+    pub const fn set_open(&mut self, val: bool) {
+        self.open = val;
     }
 
     pub fn contains_terminal(self) -> bool {
