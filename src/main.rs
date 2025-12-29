@@ -1,19 +1,32 @@
 use self::{
     mentsu::Mentsu,
+    player_state::{PlayerState, Wind},
     score::fu,
     yaku::{REGULAR_YAKU, Yaku},
 };
 
 mod mentsu;
 mod parser;
+mod player_state;
 mod score;
 mod tile;
 mod yaku;
 
 fn main() {
-    let s = "111222333s22m46m5m";
+    let s = "111222333s22m11z1z";
 
-    let (tiles, win_tile, win_method) = parser::parse(s);
+    let player = player_state::PlayerState {
+        seat_wind: Wind::South,
+        round_wind: Wind::East,
+        dealer: false,
+    };
+
+    let parser::Hand {
+        tiles,
+        win_tile,
+        win_method,
+    } = parser::parse(s);
+
     let i13s = parser::interpret(&tiles, win_tile, win_method);
 
     println!("{} winning interpretation(s):", i13s.len());
@@ -39,7 +52,7 @@ fn main() {
     println!("Best yaku combo:");
     for yaku in i13s
         .iter()
-        .map(|hand| valid_yaku(hand))
+        .map(|hand| valid_yaku(hand, player))
         .max_by_key(|y| y.iter().map(|y| y.han).sum::<u32>())
         .unwrap()
     {
@@ -47,11 +60,11 @@ fn main() {
     }
 }
 
-fn valid_yaku(hand: &[Mentsu]) -> Vec<&Yaku> {
+fn valid_yaku(hand: &[Mentsu], player: PlayerState) -> Vec<&Yaku> {
     let mut ans = Vec::new();
 
     for y in REGULAR_YAKU {
-        if y.valid_for(hand) {
+        if y.valid_for(hand, player) {
             ans.push(y);
         }
     }

@@ -9,9 +9,15 @@ mod win_wait;
 pub use win_method::WinMethod;
 pub use win_wait::WinWait;
 
-pub fn parse(s: &str) -> (Vec<Tile>, Tile, WinMethod) {
+pub struct Hand {
+    pub tiles: Vec<Tile>,
+    pub win_tile: Tile,
+    pub win_method: WinMethod,
+}
+
+pub fn parse(s: &str) -> Hand {
     let mut suit_vals: Vec<u32> = Vec::new();
-    let mut hand_tiles: Vec<Tile> = Vec::new();
+    let mut tiles: Vec<Tile> = Vec::new();
 
     let (win_tile, win_method) = {
         let t = Tile::new(
@@ -34,15 +40,19 @@ pub fn parse(s: &str) -> (Vec<Tile>, Tile, WinMethod) {
         }
 
         for val in &suit_vals {
-            hand_tiles.push(Tile::new(*val, Suit::from(c)));
+            tiles.push(Tile::new(*val, Suit::from(c)));
         }
 
         suit_vals.clear();
     }
 
-    hand_tiles.sort();
+    tiles.sort();
 
-    (hand_tiles, win_tile, win_method)
+    Hand {
+        tiles,
+        win_tile,
+        win_method,
+    }
 }
 
 pub fn interpret(hand_tiles: &[Tile], win_tile: Tile, win_method: WinMethod) -> Vec<Vec<Mentsu>> {

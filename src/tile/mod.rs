@@ -4,6 +4,8 @@ mod suit;
 
 pub use suit::{Suit, SuitIter};
 
+use crate::player_state::Wind;
+
 #[derive(Debug, Copy, Clone, Eq, Ord)]
 pub struct Tile {
     pub value: u32,
@@ -83,6 +85,18 @@ impl Tile {
                 value,
                 suit: self.suit,
             })
+        }
+    }
+
+    pub fn wind(self) -> Option<Wind> {
+        if !self.honor() { return None }
+
+        match self.value {
+            1 => Some(Wind::East),
+            2 => Some(Wind::South),
+            3 => Some(Wind::West),
+            4 => Some(Wind::North),
+            _ => None
         }
     }
 }

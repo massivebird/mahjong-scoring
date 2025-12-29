@@ -1,5 +1,6 @@
 use self::kind::Kind;
 use crate::parser::WinWait;
+use crate::player_state::Wind;
 use crate::tile::{Suit, Tile};
 
 mod iter;
@@ -133,6 +134,13 @@ impl Mentsu {
             | (Kind::Quad(a), Kind::Quad(b))
             | (Kind::Pair(a), Kind::Pair(b)) => a.value == b.value,
             _ => false,
+        }
+    }
+
+    pub fn wind(self) -> Option<Wind> {
+        match self.kind {
+            Kind::Triplet(t) | Kind::Quad(t) | Kind::Pair(t) => t.wind(),
+            Kind::Sequence(_, _, _) => None,
         }
     }
 
