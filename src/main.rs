@@ -53,7 +53,7 @@ fn main() {
     for yaku in i13s
         .iter()
         .map(|hand| valid_yaku(hand, player))
-        .max_by_key(|y| y.iter().map(|y| y.han()).sum::<u32>())
+        .max_by_key(|y| y.iter().map(|y| y.han(true)).sum::<u32>())
         .unwrap()
     {
         println!("{}", yaku.name);

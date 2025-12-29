@@ -12,7 +12,7 @@ pub use regular::REGULAR_YAKU;
 pub use weird::WEIRD_YAKU;
 pub use yakuman::YAKUMAN;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Yaku {
     pub name: &'static str,
     pub desc: &'static str,
@@ -32,16 +32,17 @@ impl Yaku {
 
     /// Returns the yaku's han value. If applicable, accounts for reduced han
     /// when scored open.
-    pub fn han(self) -> u32 {
-        match self.open_score {
-            OpenScore::Full => self.han,
-            OpenScore::Reduced => self.han - 1,
-            OpenScore::Illegal => unreachable!(),
+    pub const fn han(self, menzenchin: bool) -> u32 {
+        match (self.open_score, menzenchin) {
+            (OpenScore::Full, _) => self.han,
+            (OpenScore::Reduced | OpenScore::Illegal, true) => self.han,
+            (OpenScore::Reduced, false) => self.han - 1,
+            (OpenScore::Illegal, false) => unreachable!(),
         }
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum OpenScore {
     Full,
     Reduced,
