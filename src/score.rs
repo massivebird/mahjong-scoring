@@ -1,7 +1,6 @@
 use crate::{
-    WinMethod,
     mentsu::{Mentsu, kind::Kind},
-    win_wait::WinWait,
+    parser::{WinMethod, WinWait},
 };
 
 /// Computes the hand's fu.

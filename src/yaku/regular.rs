@@ -1,5 +1,5 @@
 use super::{OpenScore, Yaku};
-use crate::{mentsu::kind::Kind, tile::Suit, win_wait::WinWait};
+use crate::{mentsu::kind::Kind, tile::Suit, parser::WinWait};
 use strum::IntoEnumIterator;
 
 pub static REGULAR_YAKU: &[Yaku] = &[

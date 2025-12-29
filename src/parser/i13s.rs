@@ -1,10 +1,11 @@
 use crate::{
-    WinMethod,
     mentsu::{Mentsu, kind::Kind},
+    parser::win_wait::WinWait,
     tile::Tile,
-    win_wait::WinWait,
 };
 use std::collections::{BTreeMap, HashSet};
+
+use super::WinMethod;
 
 pub fn build(as_tiles: &[Tile], win_tile: Tile, win_method: WinMethod) -> Vec<Vec<Mentsu>> {
     let mut counts: BTreeMap<Tile, u32> = BTreeMap::new();

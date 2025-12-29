@@ -8,14 +8,7 @@ mod mentsu;
 mod parser;
 mod score;
 mod tile;
-mod win_wait;
 mod yaku;
-
-#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub enum WinMethod {
-    Tsumo,
-    Ron,
-}
 
 fn main() {
     let s = "111222333s22m46m5m";

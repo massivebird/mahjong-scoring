@@ -1,6 +1,6 @@
 use self::kind::Kind;
+use crate::parser::WinWait;
 use crate::tile::{Suit, Tile};
-use crate::win_wait::WinWait;
 
 mod iter;
 pub mod kind;
