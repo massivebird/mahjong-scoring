@@ -11,6 +11,13 @@ pub static REGULAR_YAKU: &[Yaku] = &[
         f: |vec_mn| vec_mn.iter().all(|m| !m.contains_terminal()),
     },
     Yaku {
+        name: "Menzen-tsumo",
+        desc: "Won by tsumo in menzenchin",
+        han: 1,
+        open_score: OpenScore::Illegal,
+        f: |vec_mn| !vec_mn.iter().any(|m| m.open),
+    },
+    Yaku {
         name: "Chanta",
         desc: "All mentsu contain at least one terminal or honor",
         han: 2,
